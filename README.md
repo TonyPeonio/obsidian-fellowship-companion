@@ -76,7 +76,7 @@ a recommender, a vendor or anyone else.
 | Open the board | Rewrites `Fellowships/Board.md` (due in 30 days, letters due in 14 days, a table per status); optional `.ics` export of both deadline kinds |
 | Screen eligibility | Rules + optional model verdict per quoted criterion against `Profile.md`, under `## Eligibility screen` |
 
-All but the first two commands need a fellowship note open (one with `name`, `funder` and
+*Add an opportunity* and *Open the board* work anywhere; the other four commands need a fellowship note open (one with `name`, `funder` and
 `status` in its properties).
 
 ### Note shape

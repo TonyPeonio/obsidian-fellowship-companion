@@ -147,7 +147,13 @@ export default class FellowshipCompanionPlugin extends Plugin {
 	async checkMaterials(file: TFile): Promise<void> {
 		const note = await this.readFellowship(file);
 		if (!note) return;
-		const content = await this.app.vault.read(file);
+		let content: string;
+		try {
+			content = await this.app.vault.read(file);
+		} catch (err) {
+			new Notice(`Could not read ${file.path}: ${(err as Error).message}`, 8000);
+			return;
+		}
 		const required = note.materials.length ? note.materials : listItems(sectionBody(content, "Materials")).map((i) => i.replace(/\s+—.*$/, ""));
 		const folder = normalizePath(this.settings.materialsFolder);
 		const files = filesInFolder(this.vault, folder);
@@ -211,8 +217,12 @@ export default class FellowshipCompanionPlugin extends Plugin {
 			}
 		}
 		if (written.length) {
-			await this.app.vault.process(file, (c) => appendToSection(c, "Timeline", timelineLine(date, `letter requests drafted for ${written.join(", ")}`)));
-			await this.app.workspace.openLinkText(normalizePath(`${this.settings.lettersFolder}/${letterFileName(written[0], note.name)}`), "", false);
+			try {
+				await this.app.vault.process(file, (c) => appendToSection(c, "Timeline", timelineLine(date, `letter requests drafted for ${written.join(", ")}`)));
+				await this.app.workspace.openLinkText(normalizePath(`${this.settings.lettersFolder}/${letterFileName(written[0], note.name)}`), "", false);
+			} catch (err) {
+				new Notice(`The requests were written, but ${file.path} could not be updated: ${(err as Error).message}`, 10000);
+			}
 		}
 		new Notice(`${written.length} letter request${written.length === 1 ? "" : "s"} drafted under ${this.settings.lettersFolder}${skipped.length ? `; ${skipped.length} already existed (asked-on date set)` : ""}. Nothing was sent.`, 8000);
 	}
@@ -225,8 +235,15 @@ export default class FellowshipCompanionPlugin extends Plugin {
 			new Notice(`Profile note not found at ${profilePath}. Create it with lines like "citizenship: US", "degree: BS Physics", "year: junior", "gpa: 3.8", "field: physics", or set its path in settings.`, 10000);
 			return;
 		}
-		const profile = parseProfile(await this.vault.read(profilePath));
-		const content = await this.app.vault.read(file);
+		let profile: ReturnType<typeof parseProfile>;
+		let content: string;
+		try {
+			profile = parseProfile(await this.vault.read(profilePath));
+			content = await this.app.vault.read(file);
+		} catch (err) {
+			new Notice(`Could not read the profile or the note: ${(err as Error).message}`, 8000);
+			return;
+		}
 		const listed = note.eligibility.length ? note.eligibility : listItems(sectionBody(content, "Eligibility"));
 		const { kept, dropped } = groundedCriteria(listed, note.callText);
 		let model: Map<number, { verdict: "likely eligible" | "check" | "not eligible"; reason: string }> | null = null;
@@ -312,7 +329,15 @@ export default class FellowshipCompanionPlugin extends Plugin {
 
 	async loadSettings(): Promise<void> {
 		const data = (await this.loadData()) as Partial<FellowshipSettings> | null;
-		this.settings = { ...DEFAULT_SETTINGS, ...(data ?? {}) };
+		const s: FellowshipSettings = { ...DEFAULT_SETTINGS, ...(data ?? {}) };
+		// data.json may have been edited by hand: keep the number and the paths usable.
+		const n = Number(s.numCtx);
+		s.numCtx = Number.isFinite(n) ? Math.min(262144, Math.max(2048, Math.round(n))) : DEFAULT_SETTINGS.numCtx;
+		for (const key of ["ollamaUrl", "model", "fellowshipsFolder", "materialsFolder", "lettersFolder", "profilePath", "icsPath"] as const) {
+			if (typeof s[key] !== "string" || !s[key].trim()) s[key] = DEFAULT_SETTINGS[key];
+		}
+		s.exportIcs = s.exportIcs === true;
+		this.settings = s;
 	}
 
 	async saveSettings(): Promise<void> {
