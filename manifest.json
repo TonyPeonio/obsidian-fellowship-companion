@@ -1,0 +1,10 @@
+{
+	"id": "fellowship-companion",
+	"name": "Fellowship Companion",
+	"version": "0.1.0",
+	"minAppVersion": "1.7.2",
+	"description": "Track grants, fellowships and scholarships as notes: paste a call, get deadlines, eligibility, materials and letters in one note, a board of what is due, letter-request drafts and a local-model eligibility screen.",
+	"author": "Tony Peonio",
+	"authorUrl": "https://github.com/TonyPeonio",
+	"isDesktopOnly": false
+}

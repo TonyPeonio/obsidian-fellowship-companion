@@ -1,0 +1,35 @@
+{
+  "name": "fellowship-companion",
+  "version": "0.1.0",
+  "description": "Track grants, fellowships and scholarships as notes: paste a call, get a structured note with deadlines, eligibility, materials and letters; a board with what is due; letter-request drafts and an eligibility screen with a local model.",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && eslint . && node esbuild.config.mjs production",
+    "test": "vitest run",
+    "version": "node version-bump.mjs && git add manifest.json versions.json",
+    "lint": "eslint .",
+    "call:live": "esbuild scripts/call-live.ts --bundle --platform=node --format=cjs --outfile=.e2e/call-live.cjs --log-level=warning && node .e2e/call-live.cjs"
+  },
+  "keywords": [
+    "obsidian",
+    "fellowships",
+    "grants",
+    "scholarships",
+    "deadlines",
+    "ollama"
+  ],
+  "author": "Tony Peonio",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "esbuild": "^0.25.12",
+    "eslint": "^9.39.5",
+    "eslint-plugin-obsidianmd": "^0.5.0",
+    "obsidian": "^1.14.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^3.2.7"
+  }
+}
