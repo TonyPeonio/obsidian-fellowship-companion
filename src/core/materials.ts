@@ -1,6 +1,6 @@
 /**
  * Required materials: which kind each one is, which notes or files in the Materials folder
- * answer it, and the `## Materials` checklist that records the result. Everything here is
+ * answer it, and the `## Materials` list that records the result. Everything here is
  * deterministic keyword matching; no model is involved.
  */
 
@@ -97,9 +97,9 @@ function link(path: string, inTable = false): string {
 }
 
 /**
- * The `## Materials` checklist: ticked when a file answers the item (or, for letters, when
- * every expected letter is received), with links to what was found and a hint for what is
- * missing. Re-running produces the same text, so the section can be rewritten safely.
+ * The `## Materials` list: an item links to the file that answers it (or, for letters, says how many are received), otherwise it
+ * says "missing" with a hint for what name would match. Re-running produces the same text, so the
+ * section can be rewritten safely.
  */
 export function renderMaterialsSection(matches: MaterialMatch[], materialsFolder: string, letters: LettersProgress): string {
 	if (matches.length === 0) return `_No required materials listed in the properties. Add them under \`materials:\` and run Check materials again._`;
@@ -107,13 +107,12 @@ export function renderMaterialsSection(matches: MaterialMatch[], materialsFolder
 	for (const m of matches) {
 		if (m.category === "letters") {
 			const total = letters.total || null;
-			const done = total !== null && letters.received >= total;
 			const state = total === null ? "no recommenders named yet under Letters" : `${letters.received} of ${total} received`;
-			lines.push(`- [${done ? "x" : " "}] ${m.material} — ${state}`);
+			lines.push(`- ${m.material} — ${state}`);
 		} else if (m.files.length > 0) {
-			lines.push(`- [x] ${m.material} — ${m.files.map((f) => link(f)).join(", ")}`);
+			lines.push(`- ${m.material} — ${m.files.map((f) => link(f)).join(", ")}`);
 		} else {
-			lines.push(`- [ ] ${m.material} — missing: nothing in \`${materialsFolder}\` matches ${hintFor(m)}`);
+			lines.push(`- ${m.material} — missing: nothing in \`${materialsFolder}\` matches ${hintFor(m)}`);
 		}
 	}
 	return lines.join("\n");
@@ -143,16 +142,32 @@ export interface MaterialsChecklist {
 	total: number;
 }
 
-/** Ticked and total items of a `## Materials` section body (`- [x] …` / `- [ ] …`). */
+/**
+ * Ready and total items of a `## Materials` section body. An item is a bullet; it is ready when
+ * it links to a file (`[[…]]`) or reports every expected letter received. A bare item (the list a
+ * fresh note starts with), a `— missing:` item and one with no recommenders named are not ready.
+ * Checkbox bullets written by 0.1.0 (`- [x]` ready, `- [ ]` not) are still understood.
+ */
 export function materialsProgress(body: string | null): MaterialsChecklist {
 	let ready = 0;
 	let total = 0;
 	if (!body) return { ready, total };
 	for (const line of body.split(/\r?\n/)) {
-		const m = /^\s*[-*+]\s+\[([ xX])\]\s+/.exec(line);
+		const m = /^\s*[-*+]\s+(?:\[([ xX])\]\s+)?(\S.*)$/.exec(line);
 		if (!m) continue;
 		total++;
-		if (m[1] !== " ") ready++;
+		if (m[1] !== undefined) {
+			if (m[1] !== " ") ready++;
+			continue;
+		}
+		if (materialLineReady(m[2])) ready++;
 	}
 	return { ready, total };
+}
+
+function materialLineReady(text: string): boolean {
+	if (/—\s*missing\b/.test(text) || /no recommenders named yet/.test(text)) return false;
+	const letters = /(\d+) of (\d+) received/.exec(text);
+	if (letters) return Number(letters[1]) >= Number(letters[2]);
+	return /\[\[/.test(text);
 }

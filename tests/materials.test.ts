@@ -69,19 +69,26 @@ describe("materials section", () => {
 	it("ticks found items with links, explains missing ones, reports letters progress, and is idempotent", () => {
 		const matches = matchMaterials(REQUIRED, filesInFolder(vault(), "Fellowships/Materials"));
 		const section = renderMaterialsSection(matches, "Fellowships/Materials", { received: 1, total: 3 });
-		expect(section).toContain("- [x] Personal statement (2 pages) — [[Fellowships/Materials/Personal Statement - Meridian]], [[Fellowships/Materials/Statement of purpose.docx]]");
-		expect(section).toContain('- [ ] Research statement — missing: nothing in `Fellowships/Materials` matches "research statement" or "proposal"');
-		expect(section).toContain("- [x] Unofficial transcripts — [[Fellowships/Materials/Transcript_Fall2026.pdf]]");
-		expect(section).toContain("- [ ] 3 letters of recommendation — 1 of 3 received");
-		expect(section).toContain("- [x] Writing sample (10 pages) — [[Fellowships/Materials/Writing sample - thesis chapter.pdf]]");
+		expect(section).toContain("- Personal statement (2 pages) — [[Fellowships/Materials/Personal Statement - Meridian]], [[Fellowships/Materials/Statement of purpose.docx]]");
+		expect(section).toContain('- Research statement — missing: nothing in `Fellowships/Materials` matches "research statement" or "proposal"');
+		expect(section).toContain("- Unofficial transcripts — [[Fellowships/Materials/Transcript_Fall2026.pdf]]");
+		expect(section).toContain("- 3 letters of recommendation — 1 of 3 received");
+		expect(section).not.toMatch(/- \[[ x]\]/);
+		expect(section).toContain("- Writing sample (10 pages) — [[Fellowships/Materials/Writing sample - thesis chapter.pdf]]");
 		expect(renderMaterialsSection(matches, "Fellowships/Materials", { received: 1, total: 3 })).toBe(section);
 		expect(materialsProgress(section)).toEqual({ ready: 5, total: 7 });
 	});
 	it("ticks letters once every expected letter is in and says when no recommender is named", () => {
 		const matches = matchMaterials(["2 letters of recommendation"], []);
-		expect(renderMaterialsSection(matches, "M", { received: 2, total: 2 })).toBe("- [x] 2 letters of recommendation — 2 of 2 received");
-		expect(renderMaterialsSection(matches, "M", { received: 0, total: 0 })).toBe("- [ ] 2 letters of recommendation — no recommenders named yet under Letters");
+		expect(renderMaterialsSection(matches, "M", { received: 2, total: 2 })).toBe("- 2 letters of recommendation — 2 of 2 received");
+		expect(renderMaterialsSection(matches, "M", { received: 0, total: 0 })).toBe("- 2 letters of recommendation — no recommenders named yet under Letters");
 		expect(renderMaterialsSection([], "M", { received: 0, total: 0 })).toMatch(/^_No required materials/);
 		expect(materialsProgress(null)).toEqual({ ready: 0, total: 0 });
+	});
+	it("counts a bullet as ready only when it links to a file or reports every letter received, and still reads 0.1.0 checkboxes", () => {
+		const plain = ["- CV — [[M/CV]]", "- Transcript — missing: nothing in `M` matches \"transcript\"", "- 3 letters of recommendation — 1 of 3 received", "- 2 letters of recommendation — 2 of 2 received", "- Budget — no recommenders named yet under Letters", "- Research statement"].join("\n");
+		expect(materialsProgress(plain)).toEqual({ ready: 2, total: 6 });
+		expect(materialsProgress("- [x] CV — [[M/CV]]\n- [ ] Transcript — missing\n- [x] Writing sample — [[M/WS]]")).toEqual({ ready: 2, total: 3 });
+		expect(plain).not.toMatch(/\[[ x]\]/);
 	});
 });

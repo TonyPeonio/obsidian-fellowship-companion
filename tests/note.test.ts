@@ -39,8 +39,9 @@ describe("fellowship note", () => {
 		const content = renderFellowshipNote(sampleInput());
 		const order = ["## Call", "## Eligibility", "## Materials", "## Letters", "## Timeline", "## Notes"].map((h) => content.indexOf(h));
 		expect(order.every((i, n) => i >= 0 && (n === 0 || i > order[n - 1]))).toBe(true);
-		expect(content).toContain("- [ ] A minimum cumulative GPA of 3.5 on a 4.0 scale is required.");
-		expect(content).toContain("- [ ] 3 letters of recommendation");
+		expect(content).toContain("\n- A minimum cumulative GPA of 3.5 on a 4.0 scale is required.\n");
+		expect(content).toContain("\n- 3 letters of recommendation\n");
+		expect(content).not.toMatch(/- \[[ x]\]/);
 		expect(content).toContain("| Recommender | Asked on | Received on |\n|---|---|---|\n|  |  |  |\n|  |  |  |\n|  |  |  |");
 		expect(content).toContain("```text\n" + US_FELLOWSHIP.trim());
 	});

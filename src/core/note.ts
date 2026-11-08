@@ -90,7 +90,7 @@ export function renderFellowshipNote(p: FellowshipNoteInput): string {
 		source: "fellowship",
 	};
 	const fence = fenceFor(p.callText);
-	const checklist = (items: string[], empty: string) => (items.length ? items.map((i) => `- [ ] ${i}`).join("\n") : `_${empty}_`);
+	const checklist = (items: string[], empty: string) => (items.length ? items.map((i) => `- ${i}`).join("\n") : `_${empty}_`);
 	const letterRows: LetterRow[] = Array.from({ length: p.lettersCount }, () => ({ recommender: "", askedOn: "", receivedOn: "" }));
 	const facts = [p.amount ? `**Amount:** ${p.amount}` : null, p.deadline ? `**Deadline:** ${p.deadline}` : "**Deadline:** not found in the call", p.lettersDeadline ? `**Letters deadline:** ${p.lettersDeadline}` : null, p.url ? `**URL:** ${p.url}` : null].filter((x): x is string => x !== null);
 	return [
@@ -107,7 +107,7 @@ export function renderFellowshipNote(p: FellowshipNoteInput): string {
 		"",
 		"## Eligibility",
 		"",
-		checklist(p.eligibility, "No eligibility statements found. Add them as `- [ ]` items; Screen eligibility reads this list and the properties."),
+		checklist(p.eligibility, "No eligibility statements found. Add them as `- ` bullets; Screen eligibility reads this list and the properties."),
 		"",
 		"## Materials",
 		"",

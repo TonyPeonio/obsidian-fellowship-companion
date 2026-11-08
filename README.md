@@ -12,7 +12,7 @@ a recommender, a vendor or anyone else.
 
 - **A note per opportunity, in your vault.** `Fellowships/<Funder> - <Name>.md` with properties
   you can query with Dataview or Bases, the call as pasted, eligibility and materials as
-  checklists, a Letters table (recommender, asked on, received on), your notes, and a timeline of
+  plain lists (no checkboxes, so nothing leaks into your task queries), a Letters table (recommender, asked on, received on), your notes, and a timeline of
   every change.
 - **Deterministic first, model second.** Deadlines (six common date formats, with the
   letters-of-recommendation deadline told apart from the application deadline), amounts with a
@@ -47,8 +47,8 @@ a recommender, a vendor or anyone else.
    "rolling" will have an empty deadline for you to fill.
 2. Put your materials in `Fellowships/Materials` (notes or files named after what they are:
    `CV.md`, `Transcript Fall 2026.pdf`, `Personal statement - NSF.md`, `Research statement.md`,
-   `Budget.xlsx`). With the note open, **Check materials** rewrites `## Materials` as a checklist:
-   ticked items link to what was found, unticked items say what name would match.
+   `Budget.xlsx`). With the note open, **Check materials** rewrites `## Materials` as a list:
+   found items link to the file, missing items say what name would match.
 3. Fill a recommender per row of the Letters table. **Draft letter requests** writes
    `Fellowships/Letters/<Recommender> - <Name>.md` for every named row without an "asked on" date
    (a summary, the letters deadline, what the call asks letters to address, the materials you will
@@ -71,7 +71,7 @@ a recommender, a vendor or anyone else.
 |---|---|
 | Add an opportunity | Paste a call; regex pass + one local-model call; writes the fellowship note |
 | Change status | considering → preparing → submitted → interview → awarded → declined → withdrawn; sets `submitted_on` and a timeline line |
-| Check materials | Matches the required materials against the Materials folder; rewrites `## Materials` as a ticked/unticked checklist with links |
+| Check materials | Matches the required materials against the Materials folder; rewrites `## Materials` as a list: found items link to the file, missing items name what would match |
 | Draft letter requests | One request note per named recommender without an "asked on" date; marks "asked on"; never sends anything |
 | Open the board | Rewrites `Fellowships/Board.md` (due in 30 days, letters due in 14 days, a table per status); optional `.ics` export of both deadline kinds |
 | Screen eligibility | Rules + optional model verdict per quoted criterion against `Profile.md`, under `## Eligibility screen` |
@@ -118,13 +118,13 @@ source: fellowship
 ```
 
 ## Eligibility
-- [ ] Applicants must be U.S. citizens, U.S. nationals or permanent residents.
+- Applicants must be U.S. citizens, U.S. nationals or permanent residents.
 …
 
 ## Materials
-- [x] CV — [[Fellowships/Materials/CV]]
-- [ ] Transcript — missing: nothing in `Fellowships/Materials` matches "transcript"
-- [ ] 3 letters of recommendation — 1 of 3 received
+- CV — [[Fellowships/Materials/CV]]
+- Transcript — missing: nothing in `Fellowships/Materials` matches "transcript"
+- 3 letters of recommendation — 1 of 3 received
 
 ## Letters
 | Recommender | Asked on | Received on |
@@ -186,7 +186,7 @@ sentences stand. A request note is written only when none exists for that recomm
 opportunity, so re-running is safe.
 
 **Eligibility screen.** Criteria come from the note's `eligibility` property (or the `##
-Eligibility` checklist) and are kept only when they appear in the call text, so the screen never
+Eligibility` list) and are kept only when they appear in the call text, so the screen never
 quotes a requirement the call does not make. Rules decide GPA thresholds (ignoring the "4.0
 scale"), U.S. citizenship and permanent residency (and "any nationality" calls), undergraduate
 versus graduate level, year of study, age limits and field lists; a criterion about a degree
