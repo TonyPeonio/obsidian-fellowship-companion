@@ -246,10 +246,18 @@ status modal), the settings tab, the JSON-reply parser and validation helpers, t
 vault and the Obsidian mock. Extraction, the call schema and merge, the note with its Letters
 table, materials matching, letter requests, the eligibility screen and the board are new.
 
-Part of a small suite of local-first companions for students and researchers at
-[github.com/TonyPeonio](https://github.com/TonyPeonio): Local Vault Agent, Lecture Companion,
-Canvas Companion, Exam Companion, Paper Companion, Research Log Companion, Meeting Companion,
-Job Hunt Companion, Code Companion and Teaching Companion.
+Fellowship Companion is part of the Companion suite of local-first Obsidian plugins by Tony Peonio
+for students and researchers: your machine does the work, every change is a diff you approve, and
+the numbers are published. The others are Local Vault Agent (local Ollama agent that searches,
+compiles, edits notes), Lecture Companion (live local lecture transcription, Canvas slides, Ollama
+summaries), Canvas Companion (Canvas LMS assignments, grades and announcements as notes), Exam
+Companion (day-by-day study plan, daily quizzes and flashcards), Paper Companion (Zotero search by
+meaning, page-cited reading notes), Research Log Companion (append-only lab notebook with git,
+parameters, data hashes), Meeting Companion (local meeting transcription, decisions, action items,
+weekly digest), Job Hunt Companion (job applications as notes, resume tailoring, interview
+questions), Code Companion (commits in the daily note, weekly report, TODOs), Teaching Companion
+(local-model rubric grading with verbatim evidence) and Branching Table of Contents (parent/child
+properties as a rooted family tree). All at [github.com/TonyPeonio](https://github.com/TonyPeonio).
 
 ## License
 
